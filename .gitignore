@@ -1,0 +1,5 @@
+Debug
+Release
+/*.user
+/fdeltree.vcxproj.filters
+/fdeltree.vcproj
