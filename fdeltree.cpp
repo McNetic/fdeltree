@@ -22,8 +22,8 @@
 #include "stdafx.h"
 #include "time.h"
 
-#define VERSION     "0.1"
-#define VERDATE     "2015-07-08"
+#define VERSION     "0.2"
+#define VERDATE     "2015-07-15"
 #define VERYEARS    "2015"
 
 //#define DEBUG
@@ -51,8 +51,11 @@
 
 DWORD DeleteDirectory(const TCHAR* sPath, DWORD options = OPT_NONE);
 
-int _cdecl usage(_TCHAR* basename, FILE* outstream = stderr) {
-    return _ftprintf(outstream, TEXT("Usage: %s [options] <directory>\noptions:\n  /h  -  print this help\n  /v  -  verbose (print statistics every few seconds)\n  /f  -  force deleting of read-only files\n"), basename);
+int _cdecl usage(FILE* outstream = stderr) {
+    return _ftprintf(outstream, TEXT("Usage: fdeltree [options] <directory>\noptions:\n")
+                                TEXT("  /h  -  print this help\n  /v  -  verbose (print statistics every few seconds)\n")
+                                TEXT("  /f  -  force deleting of read-only files\n")
+                                );
 }
 
 int _tmain(int argc, _TCHAR* argv[]) {
@@ -65,20 +68,20 @@ int _tmain(int argc, _TCHAR* argv[]) {
 
     _tprintf(_T("fdeltree v%s (%s)\n(C) %s Nicolai Ehemann (en@enlightened.de)\n"), _T(VERSION), _T(VERDATE), _T(VERYEARS));
     if (2 > argc) {
-        usage(argv[0]);
+        usage();
         return ERROR_ARGUMENT_MISSING;
     } else {
         while (dirArg < argc) {
             if (0 == _tcscmp(argv[dirArg], _T("/h")) || 0 == _tcscmp(argv[dirArg], _T("/H"))) {
                 _tprintf(_T("A simple, fast recursive file deletion utility\n"));
-                usage(argv[0], stdout);
+                usage(stdout);
                 return SUCCESS;
             } else if (0 == _tcscmp(argv[dirArg], _T("/v")) || 0 == _tcscmp(argv[dirArg], _T("/V"))) {
                 options |= OPT_VERBOSE;
             } else if (0 == _tcscmp(argv[dirArg], _T("/f")) || 0 == _tcscmp(argv[dirArg], _T("/F"))) {
                 options |= OPT_FORCE;
             } else if (dirArg + 1 != argc) {
-                usage(argv[0], stderr);
+                usage(stderr);
                 return ERROR_INVALID_ARGUMENT;
             } else {
                 fileArgFound = true;
@@ -88,7 +91,7 @@ int _tmain(int argc, _TCHAR* argv[]) {
     }
 
     if (!fileArgFound) {
-        usage(argv[0]);
+        usage();
         return ERROR_ARGUMENT_MISSING;
     } else if (0 == GetFullPathName(argv[argc - 1], MAX_LONG_PATH, sTmp, NULL)) 
     {
